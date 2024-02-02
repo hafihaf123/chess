@@ -73,7 +73,7 @@ void initialiseBoard(struct ChessBoard* board) {
 
 	//everything else is empty
 	for (int i=0; i<8; i++) {
-		for (int ii=2; ii<7; ii++) {
+		for (int ii=2; ii<6; ii++) {
 			board->board[i][ii].type = EMPTY;
 		}
 	}
