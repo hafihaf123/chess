@@ -47,8 +47,8 @@ void initialiseBoard(struct ChessBoard* board);
 
 void printBoard(const struct ChessBoard* board);
 
-void makeMove(enum PieceType pieceType, int fromRank, char fromFile, int toRank, char toFile);
+void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, char fromFile, int toRank, char toFile);
 
-void makeMoveShort(enum PieceType pieceType, int toRank, char toFile);
+void makeMoveShort(struct ChessBoard* board, enum PieceType pieceType, int toRank, char toFile);
 
 #endif

@@ -84,36 +84,88 @@ void printBoard(const struct ChessBoard* board) {
 		printf(" - - - - - - - -\n");
 		for (int ii=0; ii<8; ii++) {
 			printf("|");
+			if (board->board[ii][i].color == BLACK) {
 			switch (board->board[ii][i].type) {
 				case PAWN:
-				printf("P");
+				printf("♙");
 				break;
 				case KNIGHT:
-				printf("N");
+				printf("♘");
 				break;
 				case BISHOP:
-				printf("B");
+				printf("♗");
 				break;
 				case ROOK:
-				printf("R");
+				printf("♖");
 				break;
 				case QUEEN:
-				printf("Q");
+				printf("♕");
 				break;
 				case KING:
-				printf("K");
+				printf("♔");
 				break;
 				case EMPTY:
 				printf(" ");
 			}
+			}
+			else if (board->board[ii][i].color == WHITE) {
+			switch (board->board[ii][i].type) {
+				case PAWN:
+				printf("♟");
+				break;
+				case KNIGHT:
+				printf("♞");
+				break;
+				case BISHOP:
+				printf("♝");
+				break;
+				case ROOK:
+				printf("♜");
+				break;
+				case QUEEN:
+				printf("♛");
+				break;
+				case KING:
+				printf("♚");
+				break;
+				case EMPTY:
+				printf(" ");
+			}
+			}
+			else printf(" ");
 		}
 		printf("|\n");
 	}
 	printf(" - - - - - - - -\n");
 }
 
-/*void makeMove(PieceType pieceType, int fromRank, char fromFile, int toRank, char toFile);
-void makeMoveShort(PieceType pieceType, int toRank, char toFile);*/
+void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, char fromFile, int toRank, char toFile) {
+	if ((1 <= fromRank && fromRank <= 8) && (1 <= toRank && toRank <= 8)) {
+		fromRank--;
+		toRank--;
+	} else {
+		printf("invalid input\n");
+		return;
+	}
+	int fromFileNum, toFileNum;
+	
+	if (('a' <= fromFile && fromFile <= 'h') && ('a' <= toFile && toFile <= 'h')) {
+		fromFileNum = fromFile - 'a';
+		toFileNum = toFile - 'a';
+	} else {
+		printf("invalid input\n");
+		return;
+	}
+
+	struct Piece piece = board->board[fromFileNum][fromRank];
+	if (piece.type != pieceType) {
+		printf("piece type not corresponding\n");
+		return;
+	}
+}
+
+/*
+void makeMoveShort(struct ChessBoard* board, PieceType pieceType, int toRank, char toFile);*/
 
 int main() {
 	struct ChessBoard board;
