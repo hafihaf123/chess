@@ -146,7 +146,7 @@ void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, 
 		fromRank--;
 		toRank--;
 	} else {
-		printf("invalid input\n");
+		printf("invalid input rank: %i, %i\n", fromRank, toRank);
 		return;
 	}
 	int fromFileNum, toFileNum;
@@ -155,7 +155,7 @@ void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, 
 		fromFileNum = fromFile - 'a';
 		toFileNum = toFile - 'a';
 	} else {
-		printf("invalid input\n");
+		printf("invalid input file\n");
 		return;
 	}
 
@@ -187,9 +187,13 @@ int main() {
 	initialiseBoard(&board);
 	printBoard(&board);
 
-	char* move = malloc(7);
+	char* move = malloc(8);
 	printf("make a move (Pb2-b4): ");
 	fgets(move, sizeof(move), stdin);
+
+	for (int i=0; i<strlen(move); i++) {
+		printf("%c\n", move[i]);
+	}
 
 	enum PieceType pieceType;
 
@@ -216,7 +220,7 @@ int main() {
 			printf("piece type not recognised");
 	}
 
-	makeMove(&board, pieceType, ((int)move[3]) - ((int)'0'), move[2], ((int)move[6]) - ((int)'0'), move[5]);
+	makeMove(&board, pieceType, atoi(&move[2]),  move[1], atoi(&move[5]), move[4]);
 	free(move);
 
 	return 0;
