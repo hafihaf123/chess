@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include "chess.h"
 #include <stdio.h>
+#include <ctype.h>
 
 void initialiseBoard(struct ChessBoard* board) {
 	struct Piece blackPawn = {.type = PAWN, .color = BLACK};
@@ -75,6 +76,7 @@ void initialiseBoard(struct ChessBoard* board) {
 	for (int i=0; i<8; i++) {
 		for (int ii=2; ii<6; ii++) {
 			board->board[i][ii].type = EMPTY;
+			board->board[i][ii].color = NONE;
 		}
 	}
 }
@@ -157,11 +159,24 @@ void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, 
 		return;
 	}
 
-	struct Piece piece = board->board[fromFileNum][fromRank];
-	if (piece.type != pieceType) {
+	struct Piece pieceFrom = board->board[fromFileNum][fromRank];
+	if (pieceFrom.type != pieceType) {
 		printf("piece type not corresponding\n");
 		return;
 	}
+
+	struct Piece pieceTo = board->board[toFileNum][toRank];
+
+	if (pieceTo.color == pieceFrom.color) {
+		printf("cannot take your own piece");
+		return;
+	} else {
+		pieceTo = pieceFrom;
+		pieceFrom.type = EMPTY;
+		pieceFrom.color = NONE;
+	}
+
+	printBoard(board);
 }
 
 /*
@@ -171,6 +186,38 @@ int main() {
 	struct ChessBoard board;
 	initialiseBoard(&board);
 	printBoard(&board);
+
+	char* move = malloc(7);
+	printf("make a move (Pb2-b4): ");
+	fgets(move, sizeof(move), stdin);
+
+	enum PieceType pieceType;
+
+	switch (toupper(move[0])) {
+		case 'P':
+			pieceType = PAWN;
+			break;
+		case 'N':
+			pieceType = KNIGHT;
+			break;
+		case 'B':
+			pieceType = BISHOP;
+			break;
+		case 'R':
+			pieceType = ROOK;
+			break;
+		case 'Q':
+			pieceType = QUEEN;
+			break;
+		case 'K':
+			pieceType = KING;
+			break;
+		default:
+			printf("piece type not recognised");
+	}
+
+	makeMove(&board, pieceType, ((int)move[3]) - ((int)'0'), move[2], ((int)move[6]) - ((int)'0'), move[5]);
+	free(move);
 
 	return 0;
 }
