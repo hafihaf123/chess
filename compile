@@ -1,0 +1,6 @@
+gcc -fsanitize=address -fno-omit-frame-pointer -g -o chess chess.c
+if [ $? -eq 0 ]; then
+	./chess
+else
+	echo "Compilation failed"
+fi
