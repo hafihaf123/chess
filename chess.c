@@ -22,27 +22,16 @@
 
 void initialiseBoard(struct ChessBoard* board) {
 	struct Piece blackPawn = {.type = PAWN, .color = BLACK};
-
 	struct Piece whitePawn = {.type = PAWN, .color = WHITE};
-
 	struct Piece whiteBishop = {.type = BISHOP, .color = WHITE};
-
 	struct Piece blackBishop = {.type = BISHOP, .color = BLACK};
-
 	struct Piece whiteKnight = {.type = KNIGHT, .color = WHITE};
-
 	struct Piece blackKnight = {.type = KNIGHT, .color = BLACK};
-
 	struct Piece whiteRook = {.type = ROOK, .color = WHITE};
-
 	struct Piece blackRook = {.type = ROOK, .color = BLACK};
-
 	struct Piece whiteQueen = {.type = QUEEN, .color = WHITE};
-
 	struct Piece blackQueen = {.type = QUEEN, .color = BLACK};
-
 	struct Piece whiteKing = {.type = KING, .color = WHITE};
-
 	struct Piece blackKing = {.type = KING, .color = BLACK};
 
 	for (int i = 0; i < 8; i++) {
@@ -52,6 +41,7 @@ void initialiseBoard(struct ChessBoard* board) {
 		//black pawns to seventh rank
 		board->board[i][6] = blackPawn;
 	}
+
 	//white
 	board->board[0][0] = whiteRook;
 	board->board[1][0] = whiteKnight;
@@ -82,67 +72,68 @@ void initialiseBoard(struct ChessBoard* board) {
 }
 
 void printBoard(const struct ChessBoard* board) {
+	printf("\n");
 	for (int i=7; i>=0; i--) {
 		printf("   - - - - - - - -\n%i ", i+1);
 		for (int ii=0; ii<8; ii++) {
 			printf("|");
+			//printing black pieces
 			if (board->board[ii][i].color == BLACK) {
-			switch (board->board[ii][i].type) {
+				switch (board->board[ii][i].type) {
 				case PAWN:
-				printf("♙");
-				break;
+					printf("♙");
+					break;
 				case KNIGHT:
-				printf("♘");
-				break;
+					printf("♘");
+					break;
 				case BISHOP:
-				printf("♗");
-				break;
+					printf("♗");
+					break;
 				case ROOK:
-				printf("♖");
-				break;
+					printf("♖");
+					break;
 				case QUEEN:
-				printf("♕");
-				break;
+					printf("♕");
+					break;
 				case KING:
-				printf("♔");
-				break;
-				case EMPTY:
-				printf(" ");
+					printf("♔");
+					break;
+				}
 			}
-			}
+			//printing white pieces
 			else if (board->board[ii][i].color == WHITE) {
-			switch (board->board[ii][i].type) {
+				switch (board->board[ii][i].type) {
 				case PAWN:
-				printf("♟");
-				break;
+					printf("♟");
+					break;
 				case KNIGHT:
-				printf("♞");
-				break;
+					printf("♞");
+					break;
 				case BISHOP:
-				printf("♝");
-				break;
+					printf("♝");
+					break;
 				case ROOK:
-				printf("♜");
-				break;
+					printf("♜");
+					break;
 				case QUEEN:
-				printf("♛");
-				break;
+					printf("♛");
+					break;
 				case KING:
-				printf("♚");
-				break;
-				case EMPTY:
-				printf(" ");
+					printf("♚");
+					break;
+				}
 			}
-			}
+			//printing space for empty
 			else printf(" ");
 		}
 		printf("|\n");
 	}
 	printf("   - - - - - - - -\n");
-	printf("   a b c d e f g h\n");
+	printf("   a b c d e f g h\n\n");
 }
 
 void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, char fromFile, int toRank, char toFile) {
+	//checking if rank input is valid
 	if ((1 <= fromRank && fromRank <= 8) && (1 <= toRank && toRank <= 8)) {
 		fromRank--;
 		toRank--;
@@ -150,8 +141,9 @@ void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, 
 		printf("invalid input rank: %i, %i\n", fromRank, toRank);
 		return;
 	}
+
+	//checking if file input is valid
 	int fromFileNum, toFileNum;
-	
 	if (('a' <= fromFile && fromFile <= 'h') && ('a' <= toFile && toFile <= 'h')) {
 		fromFileNum = fromFile - 'a';
 		toFileNum = toFile - 'a';
@@ -160,6 +152,7 @@ void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, 
 		return;
 	}
 
+	//checking if piece input is valid
 	struct Piece pieceFrom = board->board[fromFileNum][fromRank];
 	if (pieceFrom.type != pieceType) {
 		printf("piece type not corresponding\n");
@@ -168,37 +161,42 @@ void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, 
 
 	struct Piece pieceTo = board->board[toFileNum][toRank];
 
+	//checking if the piece can be taken
 	if (pieceTo.color == pieceFrom.color) {
 		printf("cannot take your own piece\n");
 		return;
-	} else {
-		board->board[toFileNum][toRank] = pieceFrom;
-		pieceFrom.type = EMPTY;
-		pieceFrom.color = NONE;
-		board->board[fromFileNum][fromRank] = pieceFrom;
 	}
 
-	printBoard(board);
+	//moving the piece
+	board->board[toFileNum][toRank] = pieceFrom;
+	//emptying the original place of the piece
+	pieceFrom.type = EMPTY;
+	pieceFrom.color = NONE;
+	board->board[fromFileNum][fromRank] = pieceFrom;
 }
 
 /*
-void makeMoveShort(struct ChessBoard* board, PieceType pieceType, int toRank, char toFile);*/
+void makeMoveShort(struct ChessBoard* board, PieceType pieceType, int toRank, char toFile);
+*/
 
-int main() {
-	struct ChessBoard board;
-	initialiseBoard(&board);
-	printBoard(&board);
+int gameLoop(struct ChessBoard* board) {
 
+	printBoard(board);
+
+	//handling user input
 	char* move = malloc(8);
 	printf("make a move (Pb2-b4): ");
 	fgets(move, sizeof(move), stdin);
 
-	for (int i=0; i<strlen(move); i++) {
-		printf("%c\n", move[i]);
+	//if input is 'ex', terminate the loop
+	if (strcmp(move, "ex\n") == 0) {
+		free(move);
+		return 0;
 	}
 
 	enum PieceType pieceType;
 
+	//getting the piece type from input
 	switch (toupper(move[0])) {
 		case 'P':
 			pieceType = PAWN;
@@ -219,12 +217,28 @@ int main() {
 			pieceType = KING;
 			break;
 		default:
-			printf("piece type not recognised");
+			printf("piece type not recognised\n");
 	}
 
-	makeMove(&board, pieceType, atoi(&move[2]),  move[1], atoi(&move[5]), move[4]);
+	//making a move based on the input
+	makeMove(board, pieceType, atoi(&move[2]),  move[1], atoi(&move[5]), move[4]);
 
+	//preventing memory leaks
 	free(move);
+	//continuing the loop
+	return 1;
+}
 
+int main() {
+	struct ChessBoard board;
+	initialiseBoard(&board);
+
+	printf("\nWelcome to chess!\nTo exit, type 'ex'\n");
+
+	int bool = 1;
+	while (bool) {
+		bool = gameLoop(&board);
+	}
+	
 	return 0;
 }

@@ -50,6 +50,8 @@ void printBoard(const struct ChessBoard* board);
 
 void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, char fromFile, int toRank, char toFile);
 
-void makeMoveShort(struct ChessBoard* board, enum PieceType pieceType, int toRank, char toFile);
+/* void makeMoveShort(struct ChessBoard* board, enum PieceType pieceType, int toRank, char toFile); */
+
+int gameLoop(struct ChessBoard* board);
 
 #endif
