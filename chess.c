@@ -83,7 +83,7 @@ void initialiseBoard(struct ChessBoard* board) {
 
 void printBoard(const struct ChessBoard* board) {
 	for (int i=7; i>=0; i--) {
-		printf(" - - - - - - - -\n");
+		printf("   - - - - - - - -\n%i ", i+1);
 		for (int ii=0; ii<8; ii++) {
 			printf("|");
 			if (board->board[ii][i].color == BLACK) {
@@ -138,7 +138,8 @@ void printBoard(const struct ChessBoard* board) {
 		}
 		printf("|\n");
 	}
-	printf(" - - - - - - - -\n");
+	printf("   - - - - - - - -\n");
+	printf("   a b c d e f g h\n");
 }
 
 void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, char fromFile, int toRank, char toFile) {
@@ -168,12 +169,13 @@ void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, 
 	struct Piece pieceTo = board->board[toFileNum][toRank];
 
 	if (pieceTo.color == pieceFrom.color) {
-		printf("cannot take your own piece");
+		printf("cannot take your own piece\n");
 		return;
 	} else {
-		pieceTo = pieceFrom;
+		board->board[toFileNum][toRank] = pieceFrom;
 		pieceFrom.type = EMPTY;
 		pieceFrom.color = NONE;
+		board->board[fromFileNum][fromRank] = pieceFrom;
 	}
 
 	printBoard(board);
@@ -221,6 +223,7 @@ int main() {
 	}
 
 	makeMove(&board, pieceType, atoi(&move[2]),  move[1], atoi(&move[5]), move[4]);
+
 	free(move);
 
 	return 0;
