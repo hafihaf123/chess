@@ -99,6 +99,10 @@ void printBoard(const struct ChessBoard* board) {
 				case KING:
 					printf("♔");
 					break;
+				case EMPTY:
+					board->board[ii][i].color = NONE;
+					printf(" ");
+					break;
 				}
 			}
 			//printing white pieces
@@ -123,6 +127,11 @@ void printBoard(const struct ChessBoard* board) {
 					printf("♚");
 					break;
 				}
+				case EMPTY:
+					board->board[ii][i].color = NONE;
+					printf(" ");
+					break;
+				}
 			}
 			//printing space for empty
 			else printf(" ");
@@ -136,6 +145,8 @@ void printBoard(const struct ChessBoard* board) {
 int validateMove(enum PieceType pieceType, int fromRank, int fromFile, int toRank, int toFile) {
 	if (fromRank == toRank && fromFile == toFile) return -1;
 	switch (pieceType) {
+		case PAWN:
+			return -1;
 		case KNIGHT:
 			//TODO
 			return 1;
@@ -242,6 +253,8 @@ int validatePawnMove(struct ChessBoard* board, int fromRank, int fromFile, int t
 			}
 			//if all conditions are satisfied, the move is valid
 			return 1;
+		case NONE:
+			return -1;
 	}
 	return -1;
 }
