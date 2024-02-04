@@ -19,6 +19,7 @@
 #include "chess.h"
 #include <stdio.h>
 #include <ctype.h>
+#include <string.h>
 
 void initialiseBoard(struct ChessBoard* board) {
 	struct Piece blackPawn = {.type = PAWN, .color = BLACK};
@@ -132,6 +133,137 @@ void printBoard(const struct ChessBoard* board) {
 	printf("   a b c d e f g h\n\n");
 }
 
+int validateMove(enum PieceType pieceType, int fromRank, int fromFile, int toRank, int toFile) {
+	if (fromRank == toRank && fromFile == toFile) return -1;
+	switch (pieceType) {
+		case KNIGHT:
+			//TODO
+			return 1;
+		case BISHOP:
+			if (
+				(toFile == fromFile + (toRank - fromRank)) ||
+				(toFile == fromFile - (toRank - fromRank))
+			) return 1;
+			else return 0;
+		case ROOK:
+			if (toFile == fromFile || toRank == fromRank) return 1;
+			else return 0;
+		case QUEEN:
+			if (
+				(toFile == fromFile + (toRank - fromRank)) ||
+				(toFile == fromFile - (toRank - fromRank)) ||
+				(toFile == fromFile || toRank == fromRank)
+			) return 1;
+			else return 0;
+		case KING:
+			if (
+				(abs(toFile - fromFile) <= 1) &&
+				(abs(toRank - fromRank) <= 1)
+			) return 1;
+			else return 0;
+		case EMPTY:
+			return -1;
+	}
+	return -1;
+}
+
+int validatePawnMove(struct ChessBoard* board, int fromRank, int fromFile, int toRank, int toFile) {
+	struct Piece pawn = board->board[fromFile][fromRank];
+	switch (pawn.color) {
+		case WHITE:
+			//capturing with a pawn
+			if (fromFile != toFile) {
+				//must be to an adjacent file
+				if (abs(toFile - fromFile) > 1) return 0;
+				//the rank must be one up
+				if (toRank != fromRank + 1) return 0;
+				//if there isn't a piece, it cannot be taken :)
+				if (board->board[toFile][toRank].type == EMPTY) return 0;
+				//handling pawn promotion
+				if (toRank == 7) {
+					enum PieceType promoteToType = handlePromotion();
+					if (promoteToType == EMPTY) return 0;
+					board->board[fromFile][fromRank].type = promoteToType;
+				}
+				//if all conditions are satisfied, the move is valid
+				return 1;
+			}
+
+			//checking if there is a piece in front of the pawn
+			if (board->board[fromFile][fromRank+1].type != EMPTY) return 0;
+			//the pawn can only move 2 squares if it is on the starting rank
+			if (toRank == fromRank + 2) {
+				if (fromRank != 1) return 0;
+				if (board->board[fromFile][fromRank+2].type != EMPTY) return 0;
+			}
+			//the pawn can normally move only 1 square up
+			else if (toRank != fromRank + 1) return 0;
+			//handling pawn promotion
+			if (toRank == 7) {
+				enum PieceType promoteToType = handlePromotion();
+				if (promoteToType == EMPTY) return 0;
+				board->board[fromFile][fromRank].type = promoteToType;
+			}
+			//if all conditions are satisfied, the move is valid
+			return 1;
+		case BLACK:
+			//capturing with a pawn
+			if (fromFile != toFile) {
+				//must be to an adjacent file
+				if (abs(toFile - fromFile) > 1) return 0;
+				//the rank must be one down
+				if (toRank != fromRank - 1) return 0;
+				//if there isn't a piece, it cannot be taken :)
+				if (board->board[toFile][toRank].type == EMPTY) return 0;
+				//handling pawn promotion
+				if (toRank == 0) {
+					enum PieceType promoteToType = handlePromotion();
+					if (promoteToType == EMPTY) return 0;
+					board->board[fromFile][fromRank].type = promoteToType;
+				}
+				//if all conditions are satisfied, the move is valid
+				return 1;
+			}
+
+			//checking if there is a piece in front of the pawn
+			if (board->board[fromFile][fromRank-1].type != EMPTY) return 0;
+			//the pawn can only move 2 squares if it is on the starting rank
+			if (toRank == fromRank - 2) {
+				if (fromRank != 6) return 0;
+				if (board->board[fromFile][fromRank-2].type != EMPTY) return 0;
+			}
+			//the pawn can normally move only 1 square down
+			else if (toRank != fromRank - 1) return 0;
+			//handling pawn promotion
+			if (toRank == 0) {
+				enum PieceType promoteToType = handlePromotion();
+				if (promoteToType == EMPTY) return 0;
+				board->board[fromFile][fromRank].type = promoteToType;
+			}
+			//if all conditions are satisfied, the move is valid
+			return 1;
+	}
+	return -1;
+}
+
+enum PieceType handlePromotion() {
+	char promoteTo;
+	printf("choose a piece to promote to: (N/B/R/Q)\n");
+	scanf("%c", &promoteTo);
+	switch (toupper(promoteTo)) {
+		case 'N':
+			return KNIGHT;
+		case 'B':
+			return BISHOP;
+		case 'R':
+			return ROOK;
+		case 'Q':
+			return QUEEN;
+		default:
+			return EMPTY;
+	}
+}
+
 void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, char fromFile, int toRank, char toFile) {
 	//checking if rank input is valid
 	if ((1 <= fromRank && fromRank <= 8) && (1 <= toRank && toRank <= 8)) {
@@ -159,12 +291,31 @@ void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, 
 		return;
 	}
 
-	struct Piece pieceTo = board->board[toFileNum][toRank];
-
 	//checking if the piece can be taken
-	if (pieceTo.color == pieceFrom.color) {
+	if (board->board[toFileNum][toRank].color == pieceFrom.color) {
 		printf("cannot take your own piece\n");
 		return;
+	}
+
+	//checking move validity
+	if (pieceType == PAWN) {
+		int isMoveValid = validatePawnMove(board, fromRank, fromFileNum, toRank, toFileNum);
+		if (isMoveValid == 0){
+			printf("Move is not valid\n");
+			return;
+		} else if (isMoveValid == -1) {
+			fprintf(stderr, "Validation error");
+			return;
+		}
+	} else {
+		int isMoveValid = validateMove(pieceType, fromRank, fromFileNum, toRank, toFileNum);
+		if (isMoveValid == 0){
+			printf("Move is not valid\n");
+			return;
+		} else if (isMoveValid == -1) {
+			fprintf(stderr, "Validation error");
+			return;
+		}
 	}
 
 	//moving the piece
