@@ -46,7 +46,7 @@ struct ChessBoard{
 
 void initialiseBoard(struct ChessBoard* board);
 
-void printBoard(const struct ChessBoard* board);
+void printBoard(struct ChessBoard* board);
 
 int validateMove(enum PieceType pieceType, int fromRank, int fromFile, int toRank, int toFile);
 

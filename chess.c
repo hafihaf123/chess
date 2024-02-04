@@ -72,7 +72,7 @@ void initialiseBoard(struct ChessBoard* board) {
 	}
 }
 
-void printBoard(const struct ChessBoard* board) {
+void printBoard(struct ChessBoard* board) {
 	printf("\n");
 	for (int i=7; i>=0; i--) {
 		printf("   - - - - - - - -\n%i ", i+1);
@@ -126,7 +126,6 @@ void printBoard(const struct ChessBoard* board) {
 				case KING:
 					printf("♚");
 					break;
-				}
 				case EMPTY:
 					board->board[ii][i].color = NONE;
 					printf(" ");
