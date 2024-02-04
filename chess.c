@@ -147,8 +147,11 @@ int validateMove(enum PieceType pieceType, int fromRank, int fromFile, int toRan
 		case PAWN:
 			return -1;
 		case KNIGHT:
-			//TODO
-			return 1;
+			if (
+				(abs(toFile - fromFile) == 2 && abs(toRank - fromRank) == 1) ||
+				(abs(toRank - fromRank) == 2 && abs(toFile - fromFile) == 1)
+			) return 1;
+			else return 0;
 		case BISHOP:
 			if (
 				(toFile == fromFile + (toRank - fromRank)) ||
