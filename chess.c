@@ -261,7 +261,12 @@ int validatePawnMove(struct ChessBoard* board, int fromRank, int fromFile, int t
 enum PieceType handlePromotion() {
 	char promoteTo;
 	printf("choose a piece to promote to (N/B/R/Q): ");
-	scanf("%c", &promoteTo);
+	scanf(" %c", &promoteTo);
+
+	//flushing the input buffer
+	int c;
+	while ((c = getchar()) != '\n' && c != EOF);
+
 	switch (toupper(promoteTo)) {
 		case 'N':
 			return KNIGHT;
@@ -297,14 +302,13 @@ void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, 
 	}
 
 	//checking if piece input is valid
-	struct Piece pieceFrom = board->board[fromFileNum][fromRank];
-	if (pieceFrom.type != pieceType) {
+	if (board->board[fromFileNum][fromRank].type != pieceType) {
 		printf("piece type not corresponding\n");
 		return;
 	}
 
 	//checking if the piece can be taken
-	if (board->board[toFileNum][toRank].color == pieceFrom.color) {
+	if (board->board[toFileNum][toRank].color == board->board[fromFileNum][fromRank].color) {
 		printf("cannot take your own piece\n");
 		return;
 	}
@@ -331,11 +335,10 @@ void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, 
 	}
 
 	//moving the piece
-	board->board[toFileNum][toRank] = pieceFrom;
+	board->board[toFileNum][toRank] = board->board[fromFileNum][fromRank];
 	//emptying the original place of the piece
-	pieceFrom.type = EMPTY;
-	pieceFrom.color = NONE;
-	board->board[fromFileNum][fromRank] = pieceFrom;
+	board->board[fromFileNum][fromRank].type = EMPTY;
+	board->board[fromFileNum][fromRank].color = NONE;
 }
 
 /*
