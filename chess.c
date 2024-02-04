@@ -248,7 +248,7 @@ int validatePawnMove(struct ChessBoard* board, int fromRank, int fromFile, int t
 
 enum PieceType handlePromotion() {
 	char promoteTo;
-	printf("choose a piece to promote to: (N/B/R/Q)\n");
+	printf("choose a piece to promote to (N/B/R/Q): ");
 	scanf("%c", &promoteTo);
 	switch (toupper(promoteTo)) {
 		case 'N':
@@ -383,6 +383,9 @@ int gameLoop(struct ChessBoard* board) {
 int main() {
 	struct ChessBoard board;
 	initialiseBoard(&board);
+
+	//for debugging
+	board.board[2][6].color = WHITE;
 
 	printf("\nWelcome to chess!\nTo exit, type 'ex'\n");
 
