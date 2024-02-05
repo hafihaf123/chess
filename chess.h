@@ -48,14 +48,10 @@ void initialiseBoard(struct ChessBoard* board);
 
 void printBoard(struct ChessBoard* board);
 
-int validateMove(enum PieceType pieceType, int fromRank, int fromFile, int toRank, int toFile);
-
 void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, char fromFile, int toRank, char toFile);
 
 /* void makeMoveShort(struct ChessBoard* board, enum PieceType pieceType, int toRank, char toFile); */
 
 int gameLoop(struct ChessBoard* board);
-
-enum PieceType handlePromotion();
 
 #endif

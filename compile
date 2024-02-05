@@ -1,5 +1,12 @@
 clear
-gcc -fsanitize=address -fno-omit-frame-pointer -g -o chess chess.c
+
+compiled_validation="Validation.o"
+if [ ! -e "$compiled_validation" ]; then
+	gcc -fsanitize=address -fno-omit-frame-pointer -g Validation.c -o "$compiled_validation"
+fi
+
+gcc -fsanitize=address -fno-omit-frame-pointer -g chess.c "$compiled_validation" -o chess
+
 if [ $? -eq 0 ]; then
 	./chess
 else
