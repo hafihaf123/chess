@@ -1,14 +1,28 @@
-clear
+#!/bin/bash
 
 compiled_validation="Validation.o"
+
+log() {
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1"
+}
+
+log "Checking if $compiled_validation exists..."
 if [ ! -e "$compiled_validation" ]; then
-	gcc -fsanitize=address -fno-omit-frame-pointer -g Validation.c -o "$compiled_validation"
+    log "Compiling Validation.c to create $compiled_validation..."
+    gcc -fsanitize=address -fno-omit-frame-pointer -g Validation.c -o "$compiled_validation"
+
+    if [ $? -ne 0 ]; then
+        log "Error: Compilation of Validation.c failed."
+        exit 1
+    fi
 fi
 
+log "Compiling chess.c with $compiled_validation..."
 gcc -fsanitize=address -fno-omit-frame-pointer -g chess.c "$compiled_validation" -o chess
 
 if [ $? -eq 0 ]; then
-	./chess
+    log "Compilation successful. Running chess..."
+    ./chess
 else
-	echo "Compilation failed"
+    log "Error: Compilation of chess.c failed."
 fi
