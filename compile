@@ -1,5 +1,7 @@
 #!/bin/bash
 
+clear
+
 compiled_validation="Validation.o"
 
 log() {
@@ -9,7 +11,7 @@ log() {
 log "Checking if $compiled_validation exists..."
 if [ ! -e "$compiled_validation" ]; then
     log "Compiling Validation.c to create $compiled_validation..."
-    gcc -fsanitize=address -fno-omit-frame-pointer -g Validation.c -o "$compiled_validation"
+    gcc -fsanitize=address -fno-omit-frame-pointer -g -c Validation.c -o "$compiled_validation"
 
     if [ $? -ne 0 ]; then
         log "Error: Compilation of Validation.c failed."
