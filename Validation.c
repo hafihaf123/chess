@@ -31,12 +31,7 @@ int validateMove(struct Validation obj) {
 		case ROOK:
 			return validateRookMove(obj);
 		case QUEEN:
-			if (
-				(obj.toFile == obj.fromFile + (obj.toRank - obj.fromRank)) ||
-				(obj.toFile == obj.fromFile - (obj.toRank - obj.fromRank)) ||
-				(obj.toFile == obj.fromFile || obj.toRank == obj.fromRank)
-			) return 1;
-			else return 0;
+			return validateQueenMove(obj);
 		case KING:
 			return validateKingMove(obj);
 		case EMPTY:
@@ -140,7 +135,7 @@ int validateBishopMove(struct Validation obj) {
 		(obj.toFile == obj.fromFile - (obj.toRank - obj.fromRank))
 	) return 1;
 	else return 0; */
-	if (obj.toFile - obj.fromFile == obj.toRank - obj.fromRank) {
+	if (obj.toFile - obj.fromFile == obj.toRank - obj.fromRank && obj.toFile > obj.fromFile) {
 		for (int i=1; i < obj.toFile - obj.fromFile; i++) {
 			if (obj.board->board[obj.fromFile + i][obj.fromRank + i].type != EMPTY) {
 				return 0;
@@ -197,6 +192,14 @@ int validateKingMove(struct Validation obj) {
 	if (
 		(abs(obj.toFile - obj.fromFile) <= 1) &&
 		(abs(obj.toRank - obj.fromRank) <= 1)
+	) return 1;
+	else return 0;
+}
+
+int validateQueenMove(struct Validation obj) {
+	if (
+		(validateBishopMove(obj) == 1) ||
+		(validateRookMove(obj) == 1)
 	) return 1;
 	else return 0;
 }

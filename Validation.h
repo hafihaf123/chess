@@ -40,6 +40,8 @@ int validateRookMove(struct Validation obj);
 
 int validateKingMove(struct Validation obj);
 
+int validateQueenMove(struct Validation obj);
+
 enum PieceType handlePromotion();
 
 struct Validation createValidationObject(
