@@ -25,22 +25,11 @@ int validateMove(struct Validation obj) {
 		case PAWN:
 			return validatePawnMove(obj);
 		case KNIGHT:
-			if (
-				(abs(obj.toFile - obj.fromFile) == 2 && abs(obj.toRank - obj.fromRank) == 1) ||
-				(abs(obj.toRank - obj.fromRank) == 2 && abs(obj.toFile - obj.fromFile) == 1)
-			) return 1;
-			else return 0;
+			return validateKnightMove(obj);
 		case BISHOP:
-			if (
-				(obj.toFile == obj.fromFile + (obj.toRank - obj.fromRank)) ||
-				(obj.toFile == obj.fromFile - (obj.toRank - obj.fromRank))
-			) {
-				//for (int i=1; i<)
-			}
-			else return 0;
+			return validateBishopMove(obj);
 		case ROOK:
-			if (obj.toFile == obj.fromFile || obj.toRank == obj.fromRank) return 1;
-			else return 0;
+			return validateRookMove(obj);
 		case QUEEN:
 			if (
 				(obj.toFile == obj.fromFile + (obj.toRank - obj.fromRank)) ||
@@ -49,11 +38,7 @@ int validateMove(struct Validation obj) {
 			) return 1;
 			else return 0;
 		case KING:
-			if (
-				(abs(obj.toFile - obj.fromFile) <= 1) &&
-				(abs(obj.toRank - obj.fromRank) <= 1)
-			) return 1;
-			else return 0;
+			return validateKingMove(obj);
 		case EMPTY:
 			return -1;
 	}
@@ -139,6 +124,81 @@ int validatePawnMove(struct Validation obj) {
 			return -1;
 	}
 	return -1;
+}
+
+int validateKnightMove(struct Validation obj) {
+	if (
+		(abs(obj.toFile - obj.fromFile) == 2 && abs(obj.toRank - obj.fromRank) == 1) ||
+		(abs(obj.toRank - obj.fromRank) == 2 && abs(obj.toFile - obj.fromFile) == 1)
+	) return 1;
+	else return 0;
+}
+
+int validateBishopMove(struct Validation obj) {
+	/* if (
+		(obj.toFile == obj.fromFile + (obj.toRank - obj.fromRank)) ||
+		(obj.toFile == obj.fromFile - (obj.toRank - obj.fromRank))
+	) return 1;
+	else return 0; */
+	if (obj.toFile - obj.fromFile == obj.toRank - obj.fromRank) {
+		for (int i=1; i < obj.toFile - obj.fromFile; i++) {
+			if (obj.board->board[obj.fromFile + i][obj.fromRank + i].type != EMPTY) {
+				return 0;
+			}
+		}
+		return 1;
+	} else if (obj.toFile - obj.fromFile == obj.fromRank - obj.toRank && obj.toFile > obj.fromFile) {
+		for (int i=1; i < obj.toFile - obj.fromFile; i++) {
+			if (obj.board->board[obj.fromFile + i][obj.fromRank - i].type != EMPTY) {
+				return 0;
+			}
+		}
+		return 1;
+	} else if (obj.fromFile - obj.toFile == obj.fromRank - obj.toRank) {
+		for (int i=1; i < obj.fromFile - obj.toFile; i++) {
+			if (obj.board->board[obj.fromFile - i][obj.fromRank - i].type != EMPTY) {
+				return 0;
+			}
+		}
+		return 1;
+	} else if (obj.fromFile - obj.toFile == obj.toRank - obj.fromRank) {
+		for (int i=1; i < obj.fromFile - obj.toFile; i++) {
+			if (obj.board->board[obj.fromFile - i][obj.fromRank + i].type != EMPTY) return 0;
+		}
+		return 1;
+	} else return 0;
+}
+
+int validateRookMove(struct Validation obj) {
+	/* if (obj.toFile == obj.fromFile || obj.toRank == obj.fromRank) return 1;
+	else return 0; */
+	if (obj.toFile == obj.fromFile) {
+		for (int i=1; i < abs(obj.toRank - obj.fromRank); i++) {
+			if (obj.toRank > obj.fromRank) {
+				if (obj.board->board[obj.fromFile][obj.fromRank + i].type != EMPTY) return 0;
+			} else {
+				if (obj.board->board[obj.fromFile][obj.fromRank - i].type != EMPTY) return 0;
+			}
+		}
+		return 1;
+	}else if (obj.toRank == obj.fromRank) {
+		for (int i=1; i < abs(obj.toFile - obj.fromFile); i++) {
+			if (obj.toFile > obj.fromFile) {
+				if (obj.board->board[obj.fromFile + i][obj.fromRank].type != EMPTY) return 0;
+			} else {
+				if (obj.board->board[obj.fromFile - i][obj.fromRank].type != EMPTY) return 0;
+			}
+		}
+		return 1;
+	} else return 0;
+}
+
+int validateKingMove(struct Validation obj) {
+	if (
+		(abs(obj.toFile - obj.fromFile) <= 1) &&
+		(abs(obj.toRank - obj.fromRank) <= 1)
+	) return 1;
+	else return 0;
 }
 
 enum PieceType handlePromotion() {

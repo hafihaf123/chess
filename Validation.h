@@ -32,6 +32,14 @@ int validateMove(struct Validation obj);
 	
 int validatePawnMove(struct Validation obj);
 
+int validateKnightMove(struct Validation obj);
+
+int validateBishopMove(struct Validation obj);
+
+int validateRookMove(struct Validation obj);
+
+int validateKingMove(struct Validation obj);
+
 enum PieceType handlePromotion();
 
 struct Validation createValidationObject(

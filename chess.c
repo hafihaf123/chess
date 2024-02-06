@@ -102,7 +102,7 @@ void printBoard(struct ChessBoard* board) {
 					break;
 				case EMPTY:
 					board->board[ii][i].color = NONE;
-					printf(" ");
+					printf("b");
 					break;
 				}
 			}
@@ -129,7 +129,7 @@ void printBoard(struct ChessBoard* board) {
 					break;
 				case EMPTY:
 					board->board[ii][i].color = NONE;
-					printf(" ");
+					printf("w");
 					break;
 				}
 			}
@@ -177,7 +177,7 @@ void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, 
 	//checking move validity
 	struct Validation validationObj = createValidationObject(board, fromFileNum, fromRank, toFileNum, toRank);
 	int isMoveValid = validateMove(validationObj);
-	if (isMoveValid == 0){
+	if (isMoveValid == 0) {
 		printf("Move is not valid\n");
 		return;
 	} else if (isMoveValid == -1) {
@@ -188,8 +188,8 @@ void makeMove(struct ChessBoard* board, enum PieceType pieceType, int fromRank, 
 	//moving the piece
 	board->board[toFileNum][toRank] = board->board[fromFileNum][fromRank];
 	//emptying the original place of the piece
-	board->board[fromFileNum][fromRank].type = EMPTY;
-	board->board[fromFileNum][fromRank].color = NONE;
+	struct Piece empty = {.type = EMPTY, .color = NONE};
+	board->board[fromFileNum][fromRank] = empty;
 }
 
 /*
@@ -252,10 +252,10 @@ int main() {
 
 	printf("\nWelcome to chess!\nTo exit, type 'ex'\n");
 
-	int bool = 1;
-	while (bool) {
+	int bool;
+	do {
 		bool = gameLoop(&board);
-	}
+	} while (bool == 1);
 	
 	return 0;
 }
